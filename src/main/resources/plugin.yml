@@ -1,0 +1,5 @@
+name: SocrallyEssentials
+version: 1.0.0
+api: 1.0.0
+author: thatsmybaby
+main: dev.thatsmybaby.essentials.EssentialsLoader

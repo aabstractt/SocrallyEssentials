@@ -1,0 +1,4 @@
+HOME_NOT_FOUND: "Home {%0} not found"
+HOME_SUCCESSFULLY_CREATED: "Home {%0} successfully created at X: {%1} Y: {%2} Z: {%3}"
+HOME_TELEPORTING: "Teleporting to {%0} in 15 seconds"
+HOME_SUCCESSFULLY_REMOVED: "Home {%0} was successfully removed"
