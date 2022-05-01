@@ -1,0 +1,4 @@
+general:
+  default-home-size: 1
+  teleport_time: 5
+  tpa-timeout: 5

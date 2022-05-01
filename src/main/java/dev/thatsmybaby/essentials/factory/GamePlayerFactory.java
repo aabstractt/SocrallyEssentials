@@ -1,5 +1,6 @@
 package dev.thatsmybaby.essentials.factory;
 
+import dev.thatsmybaby.essentials.EssentialsLoader;
 import dev.thatsmybaby.essentials.factory.provider.MysqlProvider;
 import dev.thatsmybaby.essentials.object.GamePlayer;
 import lombok.Getter;
@@ -42,6 +43,8 @@ public final class GamePlayerFactory extends MysqlProvider {
 
             if (this.getTargetName(xuid) == null) {
                 preparedStatement = connection.prepareStatement("INSERT INTO users (username, xuid, max_home_size) VALUES (?, ?, ?)");
+
+                preparedStatement.setInt(3, EssentialsLoader.getInstance().getConfig().getInt("default-home-size"));
             } else {
                 preparedStatement = connection.prepareStatement("UPDATE users SET username = ? WHERE xuid = ? ");
             }
@@ -52,18 +55,19 @@ public final class GamePlayerFactory extends MysqlProvider {
             preparedStatement.executeUpdate();
             preparedStatement.close();
 
-            preparedStatement = connection.prepareStatement("SELECT max_home_size FROM users WHERE xuid = ?");
+            preparedStatement = connection.prepareStatement("SELECT * FROM users WHERE xuid = ?");
 
             preparedStatement.setString(1, xuid);
             ResultSet rs = preparedStatement.executeQuery();
 
-            GamePlayer.add(xuid, new GamePlayer(
-                    xuid,
-                    name,
-                    CrossServerTeleportFactory.getInstance().loadPlayerCrossServerLocations(xuid, true),
-                    rs.getInt("max_home_size"),
-                    false
-            ));
+            if (rs.next()) {
+                GamePlayer.add(xuid, new GamePlayer(
+                        xuid,
+                        name,
+                        CrossServerTeleportFactory.getInstance().loadPlayerCrossServerLocations(xuid, true),
+                        rs.getInt("max_home_size"), false
+                ));
+            }
 
             rs.close();
             preparedStatement.close();
