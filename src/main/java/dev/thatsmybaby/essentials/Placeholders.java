@@ -57,6 +57,6 @@ public final class Placeholders {
         String[] split = string.split(";");
 
         Position position = positionFromString(string);
-        return Location.fromObject(position, position.getValidLevel(), Double.parseDouble(split[3]), Double.parseDouble(split[4]));
+        return Location.fromObject(position, position.getValidLevel(), Double.parseDouble(split[4]), Double.parseDouble(split[5]));
     }
 }

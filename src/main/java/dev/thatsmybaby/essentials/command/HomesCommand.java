@@ -36,7 +36,7 @@ public final class HomesCommand extends Command {
                 return false;
             }
 
-            handleSeeHomes(commandSender, args[0], gamePlayer.getCrossServerLocationMap());
+            handleSeeHomes(commandSender, commandSender.getName(), gamePlayer.getCrossServerLocationMap());
 
             return false;
         }
