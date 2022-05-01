@@ -37,6 +37,14 @@ public final class GamePlayer {
         playerMap.put(xuid, gamePlayer);
     }
 
+    public static void clear(String xuid) {
+        GamePlayer gamePlayer = playerMap.remove(xuid);
+
+        if (gamePlayer == null) return;
+
+        gamePlayer.crossServerLocationMap.clear();
+    }
+
     public static GamePlayer of(Player player) {
         return of(player.getLoginChainData().getXUID());
     }

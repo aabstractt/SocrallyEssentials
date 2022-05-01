@@ -5,6 +5,7 @@ import dev.thatsmybaby.essentials.command.*;
 import dev.thatsmybaby.essentials.factory.CrossServerTeleportFactory;
 import dev.thatsmybaby.essentials.factory.GamePlayerFactory;
 import dev.thatsmybaby.essentials.listener.PlayerJoinListener;
+import dev.thatsmybaby.essentials.listener.PlayerQuitListener;
 import lombok.Getter;
 
 import java.io.File;
@@ -33,6 +34,7 @@ public final class EssentialsLoader extends PluginBase {
         this.getServer().getCommandMap().register("essentials", new EssentialsReloadCommand("ereload"));
 
         this.getServer().getPluginManager().registerEvents(new PlayerJoinListener(), this);
+        this.getServer().getPluginManager().registerEvents(new PlayerQuitListener(), this);
     }
 
     @Override
