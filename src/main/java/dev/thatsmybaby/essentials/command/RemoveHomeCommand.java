@@ -55,7 +55,7 @@ public final class RemoveHomeCommand extends Command {
 
         commandSender.sendMessage(Placeholders.replacePlaceholders("PLAYER_HOME_SUCCESSFULLY_REMOVED", target.getName(), crossServerLocation.getName()));
 
-        TaskUtils.runAsync(() -> CrossServerTeleportFactory.getInstance().removePlayerCrossServerLocation(target.getLoginChainData().getXUID(), args[0], true));
+        TaskUtils.runAsync(() -> CrossServerTeleportFactory.getInstance().removePlayerCrossServerLocation(target.getName(), crossServerLocation.getName()));
 
         gamePlayer.removeCrossServerLocation(crossServerLocation.getName());
 
@@ -63,7 +63,7 @@ public final class RemoveHomeCommand extends Command {
     }
 
     private void handleAsync(CommandSender sender, String name, String homeName) {
-        int rowCount = CrossServerTeleportFactory.getInstance().removePlayerCrossServerLocation(name, homeName, false);
+        int rowCount = CrossServerTeleportFactory.getInstance().removePlayerCrossServerLocation(name, homeName);
 
         if (rowCount == -1) {
             sender.sendMessage(Placeholders.replacePlaceholders("PLAYER_NOT_FOUND", name));

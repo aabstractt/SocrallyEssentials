@@ -23,6 +23,7 @@ public final class EssentialsLoader extends PluginBase {
         GamePlayerFactory.getInstance().init(new File(this.getDataFolder(), "hikari.properties"));
         CrossServerTeleportFactory.getInstance().init(new File(this.getDataFolder(), "hikari.properties"));
 
+        this.getServer().getCommandMap().register("essentials", new AddHomeCommand("addhome", "Add home amount to a player"));
         this.getServer().getCommandMap().register("essentials", new SetHomeCommand("sethome", "Set a new home"));
         this.getServer().getCommandMap().register("essentials", new HomeCommand("home", "Go to a specify home"));
         this.getServer().getCommandMap().register("essentials", new DeleteHomeCommand("delhome", "Delete a home"));

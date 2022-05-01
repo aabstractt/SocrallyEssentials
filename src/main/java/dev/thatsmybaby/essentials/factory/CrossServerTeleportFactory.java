@@ -82,7 +82,7 @@ public final class CrossServerTeleportFactory extends MysqlProvider {
             ResultSet rs = preparedStatement.executeQuery();
 
             while (rs.next()) {
-                map.put(rs.getString("name"), new CrossServerLocation(
+                map.put(rs.getString("name").toLowerCase(), new CrossServerLocation(
                         rs.getString("name"),
                         rs.getString("location"),
                         Placeholders.locationFromString(rs.getString("location"))
@@ -92,7 +92,7 @@ public final class CrossServerTeleportFactory extends MysqlProvider {
             rs.close();
             preparedStatement.close();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
 
         return map;
@@ -126,17 +126,19 @@ public final class CrossServerTeleportFactory extends MysqlProvider {
             rs.close();
             preparedStatement.close();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
 
         return crossServerLocation;
     }
 
-    public int removePlayerCrossServerLocation(String xuid, String homeName, boolean isXuid) {
+    public int removePlayerCrossServerLocation(String name, String homeName) {
         if (this.dataSource == null) return -1;
 
         try (Connection connection = this.dataSource.getConnection()) {
-            if (!isXuid && (xuid = GamePlayerFactory.getInstance().getTargetXuid(xuid)) == null) return -1;
+            String xuid = GamePlayerFactory.getInstance().getTargetXuid(name);
+
+            if (xuid == null) return -1;
 
             PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM essentials_home WHERE name = ? AND xuid = ?");
 
@@ -145,6 +147,8 @@ public final class CrossServerTeleportFactory extends MysqlProvider {
 
             int rowCount = preparedStatement.executeUpdate();
             preparedStatement.close();
+
+            System.out.println("Row count affected is " + rowCount);
 
             return rowCount;
         } catch (SQLException e) {

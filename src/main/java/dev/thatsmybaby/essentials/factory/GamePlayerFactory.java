@@ -76,7 +76,7 @@ public final class GamePlayerFactory extends MysqlProvider {
         }
     }
 
-    public String getTargetXuid(String name) throws SQLException {
+    public String getTargetXuid(String name) {
         String xuid = null;
 
         if (this.dataSource == null) {
@@ -96,12 +96,14 @@ public final class GamePlayerFactory extends MysqlProvider {
 
             rs.close();
             preparedStatement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
 
         return xuid;
     }
 
-    public String getTargetName(String xuid) throws SQLException {
+    public String getTargetName(String xuid) {
         String name = null;
 
         if (this.dataSource == null) {
@@ -121,8 +123,28 @@ public final class GamePlayerFactory extends MysqlProvider {
 
             rs.close();
             preparedStatement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
 
         return name;
+    }
+
+    public void updateMaxHomeSize(String xuid, int maxHomeSize) {
+        if (this.dataSource == null) {
+            return;
+        }
+
+        try (Connection connection = this.dataSource.getConnection()) {
+            PreparedStatement preparedStatement = connection.prepareStatement("UPDATE users SET max_home_size = ? WHERE xuid = ?");
+
+            preparedStatement.setInt(1, maxHomeSize);
+            preparedStatement.setString(2, xuid);
+
+            preparedStatement.executeUpdate();
+            preparedStatement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

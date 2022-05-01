@@ -1,6 +1,7 @@
 package dev.thatsmybaby.essentials.command;
 
 import cn.nukkit.Player;
+import cn.nukkit.Server;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.level.Location;
@@ -41,17 +42,33 @@ public final class HomesCommand extends Command {
             return false;
         }
 
-        TaskUtils.runAsync(() -> {
-            Map<String, CrossServerLocation> crossServerLocationMap = CrossServerTeleportFactory.getInstance().loadPlayerCrossServerLocations(args[0], false);
+        Player target = Server.getInstance().getPlayer(args[0]);
 
-            if (crossServerLocationMap == null) {
-                commandSender.sendMessage(Placeholders.replacePlaceholders("PLAYER_NOT_FOUND", args[0]));
+        if (target == null) {
+            TaskUtils.runAsync(() -> {
+                Map<String, CrossServerLocation> crossServerLocationMap = CrossServerTeleportFactory.getInstance().loadPlayerCrossServerLocations(args[0], false);
 
-                return;
-            }
+                if (crossServerLocationMap == null) {
+                    commandSender.sendMessage(Placeholders.replacePlaceholders("PLAYER_NOT_FOUND", args[0]));
 
-            handleSeeHomes(commandSender, args[0], crossServerLocationMap);
-        });
+                    return;
+                }
+
+                handleSeeHomes(commandSender, args[0], crossServerLocationMap);
+            });
+
+            return false;
+        }
+
+        GamePlayer gamePlayer = GamePlayer.of(target);
+
+        if (gamePlayer == null) {
+            commandSender.sendMessage(Placeholders.replacePlaceholders("UNEXPECTED_ERROR"));
+
+            return false;
+        }
+
+        HomesCommand.handleSeeHomes(commandSender, target.getName(), gamePlayer.getCrossServerLocationMap());
 
         return false;
     }
@@ -59,10 +76,16 @@ public final class HomesCommand extends Command {
     public static void handleSeeHomes(CommandSender sender, String name, Map<String, CrossServerLocation> crossServerLocationMap) {
         sender.sendMessage(Placeholders.replacePlaceholders("HOME_LIST_PLAYER", name));
 
+        if (crossServerLocationMap.isEmpty()) {
+            sender.sendMessage(Placeholders.replacePlaceholders("PLAYER_HOME_EMPTY"));
+
+            return;
+        }
+
         for (CrossServerLocation crossServerLocation : crossServerLocationMap.values()) {
             Location l = crossServerLocation.getLocation();
 
-            sender.sendMessage(Placeholders.replacePlaceholders("HOME_LIST_TEXT", crossServerLocation.getName(), String.valueOf(l.getFloorX()), String.valueOf(l.getFloorY()), String.valueOf(l.getFloorZ())));
+            sender.sendMessage(Placeholders.replacePlaceholders("HOME_LIST_TEXT", crossServerLocation.getName(), String.valueOf(l.getFloorX()), String.valueOf(l.getFloorY()), String.valueOf(l.getFloorZ()), l.getLevelName()));
         }
     }
 }

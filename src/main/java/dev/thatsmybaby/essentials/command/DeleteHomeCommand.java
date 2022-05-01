@@ -53,7 +53,7 @@ public final class DeleteHomeCommand extends Command {
         commandSender.sendMessage(Placeholders.replacePlaceholders("HOME_SUCCESSFULLY_DELETED", crossServerLocation.getName()));
 
         gamePlayer.removeCrossServerLocation(args[0]);
-        TaskUtils.runAsync(() -> CrossServerTeleportFactory.getInstance().removePlayerCrossServerLocation(((Player) commandSender).getLoginChainData().getXUID(), crossServerLocation.getName(), true));
+        TaskUtils.runAsync(() -> CrossServerTeleportFactory.getInstance().removePlayerCrossServerLocation(gamePlayer.getName(), crossServerLocation.getName()));
 
         return false;
     }

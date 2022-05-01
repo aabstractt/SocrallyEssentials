@@ -18,8 +18,9 @@ TELEPORTING_COUNTDOWN: "&eTeleporting in {%0} seconds!"
 
 # {%0} target player name
 HOME_LIST_PLAYER: "Viewing {%0}'s home list"
-# {%0} Home name, {%1} Server name, {%2} X, {%3} Y, {%4} Z
-HOME_LIST_TEXT: "{%0} - X {%2} Y {%3} Z {%4} ({%1})"
+# {%0} Home name, {%1} X, {%2} Y, {%3} Z, {%4} World
+HOME_LIST_TEXT: "{%0} - X {%1} Y {%2} Z {%3} ({%4})"
+PLAYER_HOME_EMPTY: "The player has no home"
 
 # {%0} Warp name
 WARP_NOT_FOUND: "&cWarp {%0} not found"
