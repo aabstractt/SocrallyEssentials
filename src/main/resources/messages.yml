@@ -1,8 +1,49 @@
+PLAYER_HOMES_LIST: "{%0} home's ({%1}/{%2})"# {%0} = Player name
 HOME_NOT_FOUND: "Home {%0} not found"
-HOME_SUCCESSFULLY_CREATED: "Home {%0} successfully created at X: {%1} Y: {%2} Z: {%3}"
-HOME_TELEPORTING: "Teleporting to {%0} in 15 seconds"
-HOME_SUCCESSFULLY_REMOVED: "Home {%0} was successfully removed"
+PLAYER_NOT_FOUND: "{%0} not found"
+YOU_CANT_USE_THIS_ON_YOURSELF: "§4You can't use this on yourself"
 
+PLAYER_ALREADY_TELEPORTING: "&cAlready teleporting..."
+HOME_ALREADY_TELEPORTING: "&cAlready teleporting to the home!"
+
+# {%0} = Home name
+SET_HOME_SUCCESSFULLY_CREATED: "&aHome {%0} successfully created!"
+SET_HOME_SUCCESSFULLY_UPDATED: "&aHome {%0} successfully updated!"
 PLAYER_HOME_SUCCESSFULLY_REMOVED: "Home {%0} of {%1} was successfully removed!"
+HOME_SUCCESSFULLY_DELETED: "&aHome {%0} successfully deleted!"
 
-PLAYER_HOMES_LIST: "{%0} home's ({%1}/{%2})"
+TELEPORTING_CANCELLED_MOVEMENT: "&cTeleport cancelled due to a movement detected"
+# {%0} = countdown remaining
+TELEPORTING_COUNTDOWN: "&eTeleporting in {%0} seconds!"
+
+# {%0} target player name
+HOME_LIST_PLAYER: "Viewing {%0}'s home list"
+# {%0} Home name, {%1} Server name, {%2} X, {%3} Y, {%4} Z
+HOME_LIST_TEXT: "{%0} - X {%2} Y {%3} Z {%4} ({%1})"
+
+# {%0} Warp name
+WARP_NOT_FOUND: "&cWarp {%0} not found"
+WARP_SUCCESSFULLY_CREATED: "&aWarp {%0} successfully created!"
+WARP_SUCCESSFULLY_UPDATED: "&aWarp {%0} successfully updated!"
+WARP_SUCCESSFULLY_DELETED: "&aWarp {%0} successfully deleted!"
+
+# {%0} Player name
+TPA_REQUEST_SENT_EXPIRED: "Tpa request to {%0} was expired!"
+TPA_REQUEST_SUCCESSFULLY_SENT: "Tpa request successfully sent to {%0}, have 10 seconds to accept!"
+TPA_REQUEST_RECEIVED: "You have received a tpa request from {%0}, you have 10 seconds to accept"
+TPA_REQUEST_ALREADY_SENT: "You already sent a tpa request to {%0}"
+NO_PENDING_TPA_REQUEST: "You don't have any pending request from {%0}"
+TPA_REQUEST_SUCCESSFULLY_ACCEPTED: "You have successfully accepted the tpa request from {%0}!"
+TARGET_TPA_REQUEST_SUCCESSFULLY_ACCEPTED: "{%0} accepted the tpa request! Teleporting to he in 10 seconds."
+TARGET_TPA_REQUEST_DENIED: "{%0} denied the tpa request!"
+TPA_REQUEST_SUCCESSFULLY_DENIED: "&cYou have denied the tpa request from {%0}"
+
+# {%0} Player name, {%1} Message
+PRIVATE_MESSAGE_RECEIVED: "&7(From &b{%0}&7) &b{%1}"
+PRIVATE_MESSAGE_SENT: "&7(To &b{%0}&7) &b{%1}"
+
+YOU_ARE_NOT_ACCEPTING_TPA_REQUESTS: '&cYou are not currently accepting tpa requests'
+TARGET_NOT_IS_ACCEPTING_TPA_REQUESTS: '&cThis player is not currently accepting tpa requests'
+
+UNEXPECTED_ERROR: "&cAn unexpected error has occurred, please log out and log in to the server"
+MAX_HOMES_REACHED: "&cYou have reached the maximum of homes ({%0}), buy more slots at store.hycraft.us"

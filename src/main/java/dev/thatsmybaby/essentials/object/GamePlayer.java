@@ -33,6 +33,10 @@ public final class GamePlayer {
         this.crossServerLocationMap.remove(name.toLowerCase());
     }
 
+    public static void add(String xuid, GamePlayer gamePlayer) {
+        playerMap.put(xuid, gamePlayer);
+    }
+
     public static GamePlayer of(Player player) {
         return of(player.getLoginChainData().getXUID());
     }

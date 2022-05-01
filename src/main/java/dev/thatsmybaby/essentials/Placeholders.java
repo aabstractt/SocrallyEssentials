@@ -31,11 +31,11 @@ public final class Placeholders {
         return TextFormat.colorize(text);
     }
 
-    public static String positionToString(Position position) {
+    public static String stringFromPosition(Position position) {
         return String.format("%s;%s;%s;%s", position.getFloorX(), position.getFloorY(), position.getFloorZ(), position.getLevel().getFolderName());
     }
 
-    public static Position stringToPosition(String string) {
+    public static Position positionFromString(String string) {
         String[] split = string.split(";");
 
         if (split.length < 4) {
@@ -49,7 +49,14 @@ public final class Placeholders {
         return new Position(Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2]), Server.getInstance().getLevelByName(split[3]));
     }
 
+    public static String stringFromLocation(Location location) {
+        return stringFromPosition(location) + String.format(";%s;%s", location.yaw, location.pitch);
+    }
+
     public static Location locationFromString(String string) {
-        return null;
+        String[] split = string.split(";");
+
+        Position position = positionFromString(string);
+        return Location.fromObject(position, position.getValidLevel(), Double.parseDouble(split[3]), Double.parseDouble(split[4]));
     }
 }

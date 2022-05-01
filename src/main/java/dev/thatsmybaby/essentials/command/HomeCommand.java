@@ -63,8 +63,6 @@ public final class HomeCommand extends Command {
             return false;
         }
 
-        commandSender.sendMessage(Placeholders.replacePlaceholders("HOME_TELEPORTING", args[0]));
-
         doTeleportQueue((Player) commandSender, gamePlayer, crossServerLocation.getLocationSerialized());
 
         return false;

@@ -7,8 +7,8 @@ import cn.nukkit.utils.TextFormat;
 import dev.thatsmybaby.essentials.Placeholders;
 import dev.thatsmybaby.essentials.TaskUtils;
 import dev.thatsmybaby.essentials.factory.CrossServerTeleportFactory;
-
-import java.sql.SQLException;
+import dev.thatsmybaby.essentials.object.CrossServerLocation;
+import dev.thatsmybaby.essentials.object.GamePlayer;
 
 public final class DeleteHomeCommand extends Command {
 
@@ -34,23 +34,26 @@ public final class DeleteHomeCommand extends Command {
             return false;
         }
 
-        TaskUtils.runAsync(() -> {
-            try {
-                if (CrossServerTeleportFactory.getInstance().getHomePosition(((Player) commandSender).getLoginChainData().getXUID(), args[0]) == null) {
-                    commandSender.sendMessage(Placeholders.replacePlaceholders("HOME_NOT_FOUND", args[0]));
+        GamePlayer gamePlayer = GamePlayer.of((Player) commandSender);
 
-                    return;
-                }
+        if (gamePlayer == null) {
+            commandSender.sendMessage(Placeholders.replacePlaceholders("UNEXPECTED_ERROR"));
 
-                CrossServerTeleportFactory.getInstance().removePlayerHome(((Player) commandSender).getLoginChainData().getXUID(), args[0]);
+            return false;
+        }
 
-                commandSender.sendMessage(Placeholders.replacePlaceholders("HOME_SUCCESSFULLY_REMOVED", args[0]));
-            } catch (SQLException e) {
-                e.printStackTrace();
+        CrossServerLocation crossServerLocation = gamePlayer.getCrossServerLocation(args[0]);
 
-                ((Player) commandSender).kick("An error occurred with DeleteHomeCommand.java");
-            }
-        });
+        if (crossServerLocation == null) {
+            commandSender.sendMessage(Placeholders.replacePlaceholders("HOME_NOT_FOUND", args[0]));
+
+            return false;
+        }
+
+        commandSender.sendMessage(Placeholders.replacePlaceholders("HOME_SUCCESSFULLY_DELETED", crossServerLocation.getName()));
+
+        gamePlayer.removeCrossServerLocation(args[0]);
+        TaskUtils.runAsync(() -> CrossServerTeleportFactory.getInstance().removePlayerCrossServerLocation(((Player) commandSender).getLoginChainData().getXUID(), crossServerLocation.getName(), true));
 
         return false;
     }
