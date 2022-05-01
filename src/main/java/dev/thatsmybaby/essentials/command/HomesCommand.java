@@ -3,7 +3,15 @@ package dev.thatsmybaby.essentials.command;
 import cn.nukkit.Player;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.level.Location;
 import cn.nukkit.utils.TextFormat;
+import dev.thatsmybaby.essentials.Placeholders;
+import dev.thatsmybaby.essentials.TaskUtils;
+import dev.thatsmybaby.essentials.factory.CrossServerTeleportFactory;
+import dev.thatsmybaby.essentials.object.CrossServerLocation;
+import dev.thatsmybaby.essentials.object.GamePlayer;
+
+import java.util.Map;
 
 public final class HomesCommand extends Command {
 
@@ -13,14 +21,48 @@ public final class HomesCommand extends Command {
 
     @Override
     public boolean execute(CommandSender commandSender, String s, String[] args) {
-        if (!(commandSender instanceof Player)) {
-            commandSender.sendMessage(TextFormat.RED + "Run this command in-game");
+        if (args.length == 0 && !(commandSender instanceof Player)) {
+            commandSender.sendMessage(TextFormat.RED + "Usage: /homes <player>");
 
             return false;
         }
 
+        if (commandSender instanceof Player && (args.length == 0 || !commandSender.hasPermission("homes.command.others"))) {
+            GamePlayer gamePlayer = GamePlayer.of((Player) commandSender);
 
+            if (gamePlayer == null) {
+                commandSender.sendMessage(Placeholders.replacePlaceholders("UNEXPECTED_ERROR"));
+
+                return false;
+            }
+
+            handleSeeHomes(commandSender, args[0], gamePlayer.getCrossServerLocationMap());
+
+            return false;
+        }
+
+        TaskUtils.runAsync(() -> {
+            Map<String, CrossServerLocation> crossServerLocationMap = CrossServerTeleportFactory.getInstance().loadPlayerCrossServerLocations(args[0], false);
+
+            if (crossServerLocationMap == null) {
+                commandSender.sendMessage(Placeholders.replacePlaceholders("PLAYER_NOT_FOUND", args[0]));
+
+                return;
+            }
+
+            handleSeeHomes(commandSender, args[0], crossServerLocationMap);
+        });
 
         return false;
+    }
+
+    public static void handleSeeHomes(CommandSender sender, String name, Map<String, CrossServerLocation> crossServerLocationMap) {
+        sender.sendMessage(Placeholders.replacePlaceholders("HOME_LIST_PLAYER", name));
+
+        for (CrossServerLocation crossServerLocation : crossServerLocationMap.values()) {
+            Location l = crossServerLocation.getLocation();
+
+            sender.sendMessage(Placeholders.replacePlaceholders("HOME_LIST_TEXT", crossServerLocation.getName(), String.valueOf(l.getFloorX()), String.valueOf(l.getFloorY()), String.valueOf(l.getFloorZ())));
+        }
     }
 }

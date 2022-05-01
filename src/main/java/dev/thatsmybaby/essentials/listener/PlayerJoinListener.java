@@ -6,7 +6,7 @@ import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.Listener;
 import cn.nukkit.event.player.PlayerJoinEvent;
 import dev.thatsmybaby.essentials.TaskUtils;
-import dev.thatsmybaby.essentials.factory.HomeFactory;
+import dev.thatsmybaby.essentials.factory.CrossServerTeleportFactory;
 
 import java.sql.SQLException;
 
@@ -18,7 +18,7 @@ public final class PlayerJoinListener implements Listener {
 
         TaskUtils.runAsync(() -> {
             try {
-                HomeFactory.getInstance().createOrUpdateUser(player.getLoginChainData().getXUID(), player.getName());
+                CrossServerTeleportFactory.getInstance().createOrUpdateUser(player.getLoginChainData().getXUID(), player.getName());
             } catch (SQLException e) {
                 Server.getInstance().getLogger().logException(e);
 

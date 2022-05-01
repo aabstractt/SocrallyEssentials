@@ -14,9 +14,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public final class HomeFactory extends MysqlProvider {
+public final class CrossServerTeleportFactory extends MysqlProvider {
 
-    @Getter private final static HomeFactory instance = new HomeFactory();
+    @Getter private final static CrossServerTeleportFactory instance = new CrossServerTeleportFactory();
 
     @Override
     public void init(File file) {
@@ -136,66 +136,6 @@ public final class HomeFactory extends MysqlProvider {
         }
     }
 
-    public CrossServerLocation createPlayerCrossServerLocation(String xuid, String homeName, Location location) {
-        if (this.dataSource == null) {
-            return null;
-        }
-
-        try (Connection connection = this.dataSource.getConnection()) {
-            PreparedStatement preparedStatement;
-
-            if (this.getHomePosition(xuid, homeName) != null) {
-                preparedStatement = connection.prepareStatement("UPDATE essentials_home SET positionString = ? WHERE homeName = ? AND xuid = ?");
-            } else {
-                preparedStatement = connection.prepareStatement("INSERT INTO essentials_home (positionString, homeName, xuid) VALUES (?, ?, ?)");
-            }
-
-            preparedStatement.setString(1, Placeholders.positionToString(location));
-            preparedStatement.setString(2, homeName.toLowerCase());
-            preparedStatement.setString(3, xuid);
-
-            preparedStatement.executeUpdate();
-            preparedStatement.close();
-
-            return new CrossServerLocation(homeName, Placeholders.positionToString(location), location);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
-
-    public Map<String, CrossServerLocation> loadPlayerCrossServerLocations(String xuid) {
-        if (this.dataSource == null) {
-            return new HashMap<>();
-        }
-
-        Map<String, CrossServerLocation> map = new HashMap<>();
-
-        try (Connection connection = this.dataSource.getConnection()) {
-            PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM essentials_home WHERE xuid = ?");
-
-            preparedStatement.setString(1, xuid);
-
-            ResultSet rs = preparedStatement.executeQuery();
-
-            while (rs.next()) {
-                map.put(rs.getString("homeName"), new CrossServerLocation(
-                        rs.getString("homeName"),
-                        rs.getString("location"),
-                        Placeholders.locationFromString(rs.getString("location"))
-                ));
-            }
-
-            rs.close();
-            preparedStatement.close();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
-        return map;
-    }
-
     public Position getHomePosition(String xuid, String homeName) throws SQLException {
         String string = null;
 
@@ -297,5 +237,89 @@ public final class HomeFactory extends MysqlProvider {
         }
 
         return maxHome;
+    }
+
+    public CrossServerLocation createPlayerCrossServerLocation(String xuid, String homeName, Location location) {
+        if (this.dataSource == null) {
+            return null;
+        }
+
+        try (Connection connection = this.dataSource.getConnection()) {
+            PreparedStatement preparedStatement;
+
+            if (this.getHomePosition(xuid, homeName) != null) {
+                preparedStatement = connection.prepareStatement("UPDATE essentials_home SET positionString = ? WHERE homeName = ? AND xuid = ?");
+            } else {
+                preparedStatement = connection.prepareStatement("INSERT INTO essentials_home (positionString, homeName, xuid) VALUES (?, ?, ?)");
+            }
+
+            preparedStatement.setString(1, Placeholders.positionToString(location));
+            preparedStatement.setString(2, homeName.toLowerCase());
+            preparedStatement.setString(3, xuid);
+
+            preparedStatement.executeUpdate();
+            preparedStatement.close();
+
+            return new CrossServerLocation(homeName, Placeholders.positionToString(location), location);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public Map<String, CrossServerLocation> loadPlayerCrossServerLocations(String xuid, boolean isXuid) {
+        if (this.dataSource == null) {
+            return null;
+        }
+
+        Map<String, CrossServerLocation> map = new HashMap<>();
+
+        try (Connection connection = this.dataSource.getConnection()) {
+            if (!isXuid && (xuid = this.getTargetXuid(xuid)) == null) return null;
+
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM essentials_home WHERE xuid = ?");
+
+            preparedStatement.setString(1, xuid);
+
+            ResultSet rs = preparedStatement.executeQuery();
+
+            while (rs.next()) {
+                map.put(rs.getString("homeName"), new CrossServerLocation(
+                        rs.getString("homeName"),
+                        rs.getString("location"),
+                        Placeholders.locationFromString(rs.getString("location"))
+                ));
+            }
+
+            rs.close();
+            preparedStatement.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return map;
+    }
+
+    public int removePlayerCrossServerLocation(String xuid, String homeName, boolean isXuid) {
+        if (this.dataSource == null) return -1;
+
+        try (Connection connection = this.dataSource.getConnection()) {
+            if (!isXuid && (xuid = this.getTargetXuid(xuid)) == null) return -1;
+
+            PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM essentials_home WHERE homeName = ? AND xuid = ?");
+
+            preparedStatement.setString(1, homeName);
+            preparedStatement.setString(2, xuid);
+
+            int rowCount = preparedStatement.executeUpdate();
+            preparedStatement.close();
+
+            return rowCount;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return -1;
     }
 }

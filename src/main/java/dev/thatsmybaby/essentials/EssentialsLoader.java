@@ -2,7 +2,7 @@ package dev.thatsmybaby.essentials;
 
 import cn.nukkit.plugin.PluginBase;
 import dev.thatsmybaby.essentials.command.*;
-import dev.thatsmybaby.essentials.factory.HomeFactory;
+import dev.thatsmybaby.essentials.factory.CrossServerTeleportFactory;
 import dev.thatsmybaby.essentials.listener.PlayerJoinListener;
 import lombok.Getter;
 
@@ -19,7 +19,7 @@ public final class EssentialsLoader extends PluginBase {
         this.saveResource("messages.yml");
         this.saveResource("hikari.properties");
 
-        HomeFactory.getInstance().init(new File(this.getDataFolder(), "hikari.properties"));
+        CrossServerTeleportFactory.getInstance().init(new File(this.getDataFolder(), "hikari.properties"));
 
         this.getServer().getCommandMap().register("essentials", new SetHomeCommand("sethome", "Set a new home"));
         this.getServer().getCommandMap().register("essentials", new HomeCommand("home", "Go to a specify home"));
@@ -32,6 +32,6 @@ public final class EssentialsLoader extends PluginBase {
 
     @Override
     public void onDisable() {
-        HomeFactory.getInstance().close();
+        CrossServerTeleportFactory.getInstance().close();
     }
 }

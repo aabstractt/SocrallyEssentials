@@ -1,13 +1,15 @@
 package dev.thatsmybaby.essentials.command;
 
+import cn.nukkit.Player;
+import cn.nukkit.Server;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.utils.TextFormat;
 import dev.thatsmybaby.essentials.Placeholders;
 import dev.thatsmybaby.essentials.TaskUtils;
-import dev.thatsmybaby.essentials.factory.HomeFactory;
-
-import java.sql.SQLException;
+import dev.thatsmybaby.essentials.factory.CrossServerTeleportFactory;
+import dev.thatsmybaby.essentials.object.CrossServerLocation;
+import dev.thatsmybaby.essentials.object.GamePlayer;
 
 public final class RemoveHomeCommand extends Command {
 
@@ -27,32 +29,54 @@ public final class RemoveHomeCommand extends Command {
             return false;
         }
 
-        TaskUtils.runAsync(() -> {
-            try {
-                String xuid = HomeFactory.getInstance().getTargetXuid(args[0]);
+        Player target = Server.getInstance().getPlayer(args[0]);
 
-                if (xuid == null) {
-                    commandSender.sendMessage(TextFormat.RED + "Player " + args[0] + " not found");
+        if (target == null) {
+            TaskUtils.runAsync(() -> handleAsync(commandSender, args[0], args[1]));
 
-                    return;
-                }
+            return false;
+        }
 
-                if (HomeFactory.getInstance().getHomePosition(xuid, args[1]) == null) {
-                    commandSender.sendMessage(Placeholders.replacePlaceholders("HOME_NOT_FOUND", args[1]));
+        GamePlayer gamePlayer = GamePlayer.of(target);
 
-                    return;
-                }
+        if (gamePlayer == null) {
+            commandSender.sendMessage(Placeholders.replacePlaceholders("UNEXPECTED_ERROR"));
 
-                HomeFactory.getInstance().removePlayerHome(xuid, args[1]);
+            return false;
+        }
 
-                commandSender.sendMessage(Placeholders.replacePlaceholders("PLAYER_HOME_SUCCESSFULLY_REMOVED", args[1], args[0]));
-            } catch (SQLException e) {
-                e.printStackTrace();
+        CrossServerLocation crossServerLocation = gamePlayer.getCrossServerLocation(args[1]);
 
-                commandSender.sendMessage(TextFormat.RED + "An error occurred with RemoveHomeCommand.java " + e);
-            }
-        });
+        if (crossServerLocation == null) {
+            commandSender.sendMessage(Placeholders.replacePlaceholders("HOME_NOT_FOUND", args[1]));
+
+            return false;
+        }
+
+        commandSender.sendMessage(Placeholders.replacePlaceholders("PLAYER_HOME_SUCCESSFULLY_REMOVED", target.getName(), crossServerLocation.getName()));
+
+        TaskUtils.runAsync(() -> CrossServerTeleportFactory.getInstance().removePlayerCrossServerLocation(target.getLoginChainData().getXUID(), args[0], true));
+
+        gamePlayer.removeCrossServerLocation(crossServerLocation.getName());
 
         return false;
+    }
+
+    private void handleAsync(CommandSender sender, String name, String homeName) {
+        int rowCount = CrossServerTeleportFactory.getInstance().removePlayerCrossServerLocation(name, homeName, false);
+
+        if (rowCount == -1) {
+            sender.sendMessage(Placeholders.replacePlaceholders("PLAYER_NOT_FOUND", name));
+
+            return;
+        }
+
+        if (rowCount != 1) {
+            sender.sendMessage(Placeholders.replacePlaceholders("HOME_NOT_FOUND", homeName));
+
+            return;
+        }
+
+        sender.sendMessage(Placeholders.replacePlaceholders("PLAYER_HOME_SUCCESSFULLY_REMOVED", name, homeName));
     }
 }

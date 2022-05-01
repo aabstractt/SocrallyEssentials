@@ -2,14 +2,12 @@ package dev.thatsmybaby.essentials.command;
 
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
-import cn.nukkit.level.Position;
 import cn.nukkit.utils.TextFormat;
 import dev.thatsmybaby.essentials.Placeholders;
 import dev.thatsmybaby.essentials.TaskUtils;
-import dev.thatsmybaby.essentials.factory.HomeFactory;
+import dev.thatsmybaby.essentials.factory.CrossServerTeleportFactory;
+import dev.thatsmybaby.essentials.object.CrossServerLocation;
 
-import java.sql.SQLException;
-import java.util.List;
 import java.util.Map;
 
 public final class SeeHomeCommand extends Command {
@@ -31,33 +29,15 @@ public final class SeeHomeCommand extends Command {
         }
 
         TaskUtils.runAsync(() -> {
-            try {
-                String xuid = HomeFactory.getInstance().getTargetXuid(args[0]);
+            Map<String, CrossServerLocation> crossServerLocationMap = CrossServerTeleportFactory.getInstance().loadPlayerCrossServerLocations(args[0], false);
 
-                if (xuid == null) {
-                    commandSender.sendMessage(TextFormat.RED + args[0] + " not found");
+            if (crossServerLocationMap == null) {
+                commandSender.sendMessage(Placeholders.replacePlaceholders("PLAYER_NOT_FOUND", args[0]));
 
-                    return;
-                }
-
-                List<Map<String, String>> list = HomeFactory.getInstance().getPlayerHomeList(xuid);
-
-                if (list.isEmpty()) {
-                    commandSender.sendMessage(Placeholders.replacePlaceholders("PLAYER_HOMES_EMPTY", args[0]));
-
-                    return;
-                }
-
-                commandSender.sendMessage(Placeholders.replacePlaceholders("PLAYER_HOMES_LIST", args[0], String.valueOf(list.size()), String.valueOf(HomeFactory.getInstance().getPlayerMaxHome(xuid))));
-
-                for (Map<String, String> map : list) {
-                    Position position = Placeholders.stringToPosition(map.get("positionString"));
-
-                    commandSender.sendMessage(Placeholders.replacePlaceholders("HOME_PLACEHOLDER", map.get("homeName"), String.valueOf(position.getFloorX()), String.valueOf(position.getFloorY()), String.valueOf(position.getFloorZ()), position.getLevelName()));
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
+                return;
             }
+
+            HomesCommand.handleSeeHomes(commandSender, args[0], crossServerLocationMap);
         });
 
         return false;
