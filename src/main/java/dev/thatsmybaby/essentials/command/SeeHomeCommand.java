@@ -17,6 +17,8 @@ public final class SeeHomeCommand extends Command {
 
     public SeeHomeCommand(String name, String description) {
         super(name, description);
+
+        this.setPermission("essentials.command.seehome");
     }
 
     @Override

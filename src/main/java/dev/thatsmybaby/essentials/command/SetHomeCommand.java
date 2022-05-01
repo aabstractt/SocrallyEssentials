@@ -14,6 +14,8 @@ public final class SetHomeCommand extends Command {
 
     public SetHomeCommand(String name, String description) {
         super(name, description);
+
+        this.setPermission("essentials.command.sethome");
     }
 
     @Override

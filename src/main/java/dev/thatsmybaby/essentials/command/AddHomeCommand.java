@@ -14,6 +14,8 @@ public final class AddHomeCommand extends Command {
 
     public AddHomeCommand(String name, String description) {
         super(name, description);
+
+        this.setPermission("essentials.command.addhome");
     }
 
     @Override
@@ -23,6 +25,8 @@ public final class AddHomeCommand extends Command {
 
             return false;
         }
+
+        if (!this.testPermission(commandSender)) return false;
 
         if (!Placeholders.isNumber(args[1])) {
             commandSender.sendMessage(Placeholders.replacePlaceholders("INVALID_NUMBER", args[1]));

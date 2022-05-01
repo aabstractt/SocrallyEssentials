@@ -14,6 +14,8 @@ public final class DeleteHomeCommand extends Command {
 
     public DeleteHomeCommand(String name, String description) {
         super(name, description);
+
+        this.setPermission("essentials.command.delhome");
     }
 
     @Override
