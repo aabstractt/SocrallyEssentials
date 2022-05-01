@@ -1,0 +1,3 @@
+COSAS POR HACER
+
+- Agregar /addhome y dar un limite de home a los jugadores al hacer sethome

@@ -1,7 +1,7 @@
 package dev.thatsmybaby.essentials;
 
 import cn.nukkit.Server;
-import cn.nukkit.level.Level;
+import cn.nukkit.level.Location;
 import cn.nukkit.level.Position;
 import cn.nukkit.utils.Config;
 import cn.nukkit.utils.PluginException;
@@ -47,5 +47,9 @@ public final class Placeholders {
         }
 
         return new Position(Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2]), Server.getInstance().getLevelByName(split[3]));
+    }
+
+    public static Location locationFromString(String string) {
+        return null;
     }
 }

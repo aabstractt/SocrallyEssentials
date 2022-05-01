@@ -6,17 +6,15 @@ import cn.nukkit.Server;
 public class TaskUtils {
 
     public static void runAsync(Runnable runnable) {
-        if (isPrimaryThread()) {
+        if (Server.getInstance().isPrimaryThread()) {
             Server.getInstance().getScheduler().scheduleTask(runnable, true);
-
-            return;
+        } else {
+            runnable.run();
         }
-
-        runnable.run();
     }
 
     public static void runSync(Runnable runnable) {
-        if (isPrimaryThread()) {
+        if (Server.getInstance().isPrimaryThread()) {
             runnable.run();
         } else {
             Server.getInstance().getScheduler().scheduleTask(runnable);
@@ -25,9 +23,5 @@ public class TaskUtils {
 
     public static void runLater(Runnable runnable, int delay) {
         Server.getInstance().getScheduler().scheduleDelayedTask(runnable, delay);
-    }
-
-    protected static boolean isPrimaryThread() {
-        return Server.getInstance().isPrimaryThread();
     }
 }

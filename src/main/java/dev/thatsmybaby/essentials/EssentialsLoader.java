@@ -1,14 +1,12 @@
 package dev.thatsmybaby.essentials;
 
-import cn.nukkit.command.Command;
 import cn.nukkit.plugin.PluginBase;
-import dev.thatsmybaby.essentials.command.HomeCommand;
-import dev.thatsmybaby.essentials.command.SetHomeCommand;
+import dev.thatsmybaby.essentials.command.*;
 import dev.thatsmybaby.essentials.factory.HomeFactory;
+import dev.thatsmybaby.essentials.listener.PlayerJoinListener;
 import lombok.Getter;
 
 import java.io.File;
-import java.util.ArrayList;
 
 public final class EssentialsLoader extends PluginBase {
 
@@ -25,5 +23,15 @@ public final class EssentialsLoader extends PluginBase {
 
         this.getServer().getCommandMap().register("essentials", new SetHomeCommand("sethome", "Set a new home"));
         this.getServer().getCommandMap().register("essentials", new HomeCommand("home", "Go to a specify home"));
+        this.getServer().getCommandMap().register("essentials", new DeleteHomeCommand("delhome", "Delete a home"));
+        this.getServer().getCommandMap().register("essentials", new RemoveHomeCommand("remhome", "Remove a player home"));
+        this.getServer().getCommandMap().register("essentials", new SeeHomeCommand("seehome", "See all player home"));
+
+        this.getServer().getPluginManager().registerEvents(new PlayerJoinListener(), this);
+    }
+
+    @Override
+    public void onDisable() {
+        HomeFactory.getInstance().close();
     }
 }

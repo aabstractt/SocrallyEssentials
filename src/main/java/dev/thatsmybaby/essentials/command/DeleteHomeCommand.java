@@ -3,11 +3,12 @@ package dev.thatsmybaby.essentials.command;
 import cn.nukkit.Player;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
-import cn.nukkit.level.Position;
 import cn.nukkit.utils.TextFormat;
 import dev.thatsmybaby.essentials.Placeholders;
 import dev.thatsmybaby.essentials.TaskUtils;
 import dev.thatsmybaby.essentials.factory.HomeFactory;
+
+import java.sql.SQLException;
 
 public final class DeleteHomeCommand extends Command {
 
@@ -34,17 +35,21 @@ public final class DeleteHomeCommand extends Command {
         }
 
         TaskUtils.runAsync(() -> {
-            Position targetPosition = HomeFactory.getInstance().getHomePosition(((Player) commandSender).getLoginChainData().getXUID(), args[0]);
+            try {
+                if (HomeFactory.getInstance().getHomePosition(((Player) commandSender).getLoginChainData().getXUID(), args[0]) == null) {
+                    commandSender.sendMessage(Placeholders.replacePlaceholders("HOME_NOT_FOUND", args[0]));
 
-            if (targetPosition == null) {
-                commandSender.sendMessage(Placeholders.replacePlaceholders("HOME_NOT_FOUND", args[0]));
+                    return;
+                }
 
-                return;
+                HomeFactory.getInstance().removePlayerHome(((Player) commandSender).getLoginChainData().getXUID(), args[0]);
+
+                commandSender.sendMessage(Placeholders.replacePlaceholders("HOME_SUCCESSFULLY_REMOVED", args[0]));
+            } catch (SQLException e) {
+                e.printStackTrace();
+
+                ((Player) commandSender).kick("An error occurred with DeleteHomeCommand.java");
             }
-
-            HomeFactory.getInstance().removePlayerHome(((Player) commandSender).getLoginChainData().getXUID(), args[0]);
-
-            commandSender.sendMessage(Placeholders.replacePlaceholders("HOME_SUCCESSFULLY_REMOVED", args[0]));
         });
 
         return false;

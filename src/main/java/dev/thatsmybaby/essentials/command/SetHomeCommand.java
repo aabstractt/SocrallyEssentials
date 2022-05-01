@@ -3,11 +3,13 @@ package dev.thatsmybaby.essentials.command;
 import cn.nukkit.Player;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
-import cn.nukkit.level.Position;
+import cn.nukkit.level.Location;
 import cn.nukkit.utils.TextFormat;
 import dev.thatsmybaby.essentials.Placeholders;
 import dev.thatsmybaby.essentials.TaskUtils;
 import dev.thatsmybaby.essentials.factory.HomeFactory;
+import dev.thatsmybaby.essentials.object.CrossServerLocation;
+import dev.thatsmybaby.essentials.object.GamePlayer;
 
 public final class SetHomeCommand extends Command {
 
@@ -33,10 +35,16 @@ public final class SetHomeCommand extends Command {
             return false;
         }
 
-        Position pos = ((Player) commandSender).getPosition();
-        TaskUtils.runAsync(() -> HomeFactory.getInstance().createOrUpdateHome(((Player) commandSender).getLoginChainData().getXUID(), args[0], pos));
+        GamePlayer gamePlayer = GamePlayer.of((Player) commandSender);
 
-        commandSender.sendMessage(Placeholders.replacePlaceholders("HOME_SUCCESSFULLY_CREATED", args[0], String.valueOf(pos.getFloorX()), String.valueOf(pos.getFloorY()), String.valueOf(pos.getFloorZ())));
+        if (gamePlayer == null) return false;
+
+        Location l = ((Player) commandSender).getLocation();
+
+        commandSender.sendMessage(Placeholders.replacePlaceholders("HOME_SUCCESSFULLY_CREATED", args[0], String.valueOf(l.getFloorX()), String.valueOf(l.getFloorY()), String.valueOf(l.getFloorZ())));
+        TaskUtils.runAsync(() -> {
+            CrossServerLocation crossServerLocation = HomeFactory.getInstance().createPlayerCrossServerLocation(((Player) commandSender).getLoginChainData().getXUID(), args[0], l);
+        });
 
         return false;
     }

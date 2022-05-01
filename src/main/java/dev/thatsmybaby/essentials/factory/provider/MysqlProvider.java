@@ -9,7 +9,7 @@ import java.sql.SQLException;
 
 public abstract class MysqlProvider {
 
-    private HikariDataSource dataSource = null;
+    protected HikariDataSource dataSource = null;
 
     public void init(File file) {
         try {
@@ -36,15 +36,5 @@ public abstract class MysqlProvider {
         if (this.dataSource != null) {
             this.dataSource.close();
         }
-    }
-
-    protected Connection getConnection() {
-        try {
-            return this.dataSource.getConnection();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return null;
     }
 }
