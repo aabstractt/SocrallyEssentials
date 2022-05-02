@@ -12,6 +12,8 @@ public final class SetWarpCommand extends Command {
 
     public SetWarpCommand(String name, String description) {
         super(name, description);
+
+        this.setPermission("setwarp.command.admin");
     }
 
     @Override

@@ -13,6 +13,8 @@ public final class WarpCommand extends Command {
 
     public WarpCommand(String name, String description) {
         super(name, description);
+
+        this.setPermission("essentials.command.warp");
     }
 
     @Override
@@ -22,6 +24,8 @@ public final class WarpCommand extends Command {
 
             return false;
         }
+
+        if (!this.testPermission(commandSender)) return false;
 
         if (args.length == 0) {
             commandSender.sendMessage(TextFormat.RED + "Usage: /warp <name>");

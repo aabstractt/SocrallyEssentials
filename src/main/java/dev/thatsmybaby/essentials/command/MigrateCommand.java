@@ -22,6 +22,8 @@ public final class MigrateCommand extends Command {
 
     public MigrateCommand(String name, String description) {
         super(name, description);
+
+        this.setPermission("essentials.command.migrate");
     }
 
     @Override @SuppressWarnings("unchecked")
