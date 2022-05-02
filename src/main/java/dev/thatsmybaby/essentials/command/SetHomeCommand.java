@@ -44,7 +44,7 @@ public final class SetHomeCommand extends Command {
             return false;
         }
 
-        if (gamePlayer.getCrossServerLocation(args[0]) == null && gamePlayer.getCrossServerLocationMap().size() > gamePlayer.getMaxHomeSize()) {
+        if (gamePlayer.getCrossServerLocation(args[0]) == null && gamePlayer.getCrossServerLocationMap().size() >= gamePlayer.getMaxHomeSize()) {
             commandSender.sendMessage(Placeholders.replacePlaceholders("MAX_HOMES_REACHED", String.valueOf(gamePlayer.getCrossServerLocationMap().size())));
 
             return false;
