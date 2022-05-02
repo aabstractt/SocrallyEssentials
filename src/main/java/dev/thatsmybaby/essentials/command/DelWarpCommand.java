@@ -12,6 +12,8 @@ public final class DelWarpCommand extends Command {
 
     public DelWarpCommand(String name, String description) {
         super(name, description);
+
+        this.setPermission("delwarp.command.admin");
     }
 
     @Override

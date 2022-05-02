@@ -5,6 +5,7 @@ YOU_CANT_USE_THIS_ON_YOURSELF: "§4You can't use this on yourself"
 
 PLAYER_ALREADY_TELEPORTING: "&cAlready teleporting..."
 HOME_ALREADY_TELEPORTING: "&cAlready teleporting to the home!"
+PLAYER_HOME_LIMIT_UPDATED: "&a{%0}'s home limit updated to &e{%1}"
 
 # {%0} = Home name
 SET_HOME_SUCCESSFULLY_CREATED: "&aHome {%0} successfully created!"
@@ -48,3 +49,5 @@ TARGET_NOT_IS_ACCEPTING_TPA_REQUESTS: '&cThis player is not currently accepting 
 
 UNEXPECTED_ERROR: "&cAn unexpected error has occurred, please log out and log in to the server"
 MAX_HOMES_REACHED: "&cYou have reached the maximum of homes ({%0}), buy more slots at store.hycraft.us"
+
+MIGRATE_EXPLAIN: "&6Hemos hecho unas mejoras en nuestro plugin de essentials lo cual necesitara que migres las homes que tu desees, tienes un limite de tiempo para migrarlas ya que desapareceran. Utiliza /migrate <home_name>"

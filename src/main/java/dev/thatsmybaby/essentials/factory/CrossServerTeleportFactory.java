@@ -234,7 +234,7 @@ public final class CrossServerTeleportFactory extends MysqlProvider {
             }
 
             preparedStatement.setString(1, Placeholders.stringFromLocation(location));
-            preparedStatement.setString(1, name);
+            preparedStatement.setString(2, name);
 
             preparedStatement.executeUpdate();
             preparedStatement.close();
