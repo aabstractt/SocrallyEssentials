@@ -2,12 +2,15 @@ package dev.thatsmybaby.essentials.factory.provider;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import dev.thatsmybaby.essentials.AbstractEssentials;
 
 import java.io.File;
 
 public abstract class MysqlProvider {
 
     protected HikariDataSource dataSource = null;
+
+    protected HikariConfig hikariConfig = null;
 
     public void init(File file) {
         try {
@@ -27,7 +30,27 @@ public abstract class MysqlProvider {
         config.setIdleTimeout(600000);
         config.setMaxLifetime(1800000);
 
-        this.dataSource = new HikariDataSource(config);
+        this.dataSource = new HikariDataSource(this.hikariConfig = config);
+    }
+
+    protected boolean reconnect() {
+        this.close();
+
+        if (this.hikariConfig == null) {
+            AbstractEssentials.getInstance().getLogger().critical("Can't reconnect because Hikari config is null...");
+
+            return false;
+        }
+
+        try {
+            this.dataSource = new HikariDataSource(this.hikariConfig);
+        } catch (Exception e) {
+            AbstractEssentials.getInstance().getLogger().critical("Can't reconnect because, reason: " + e.getMessage());
+
+            return false;
+        }
+
+        return true;
     }
 
     public void close() {
