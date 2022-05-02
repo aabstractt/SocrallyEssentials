@@ -1,6 +1,5 @@
 package dev.thatsmybaby.essentials.factory;
 
-import cn.nukkit.Server;
 import dev.thatsmybaby.essentials.AbstractEssentials;
 import dev.thatsmybaby.essentials.factory.provider.MysqlProvider;
 import dev.thatsmybaby.essentials.object.GamePlayer;
