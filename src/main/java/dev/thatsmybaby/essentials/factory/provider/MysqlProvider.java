@@ -29,6 +29,8 @@ public abstract class MysqlProvider {
         config.setConnectionTimeout(10000);
         config.setIdleTimeout(600000);
         config.setMaxLifetime(1800000);
+        config.setPoolName("AbstractEssentials-Pool");
+        config.setValidationTimeout(120000);
 
         this.dataSource = new HikariDataSource(this.hikariConfig = config);
     }
