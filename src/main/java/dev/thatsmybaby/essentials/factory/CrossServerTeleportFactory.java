@@ -50,6 +50,10 @@ public final class CrossServerTeleportFactory extends MysqlProvider {
             return null;
         }
 
+        if (this.dataSource.isClosed() || !this.dataSource.isRunning()) {
+            return this.reconnect() ? this.createPlayerCrossServerLocation(xuid, homeName, location) : null;
+        }
+
         try (Connection connection = this.dataSource.getConnection()) {
             PreparedStatement preparedStatement;
 
@@ -77,6 +81,10 @@ public final class CrossServerTeleportFactory extends MysqlProvider {
     public Map<String, CrossServerLocation> loadPlayerCrossServerLocations(String xuid, boolean isXuid) {
         if (this.dataSource == null) {
             return null;
+        }
+
+        if (this.dataSource.isClosed() || !this.dataSource.isRunning()) {
+            return this.reconnect() ? this.loadPlayerCrossServerLocations(xuid, isXuid) : null;
         }
 
         Map<String, CrossServerLocation> map = new HashMap<>();
@@ -112,6 +120,10 @@ public final class CrossServerTeleportFactory extends MysqlProvider {
             return null;
         }
 
+        if (this.dataSource.isClosed() || !this.dataSource.isRunning()) {
+            return this.reconnect() ? this.loadPlayerCrossServerLocation(xuid, homeName, isXuid) : null;
+        }
+
         CrossServerLocation crossServerLocation = null;
 
         try (Connection connection = this.dataSource.getConnection()) {
@@ -143,6 +155,10 @@ public final class CrossServerTeleportFactory extends MysqlProvider {
 
     public int removePlayerCrossServerLocation(String name, String homeName) {
         if (this.dataSource == null) return -1;
+
+        if (this.dataSource.isClosed() || !this.dataSource.isRunning()) {
+            return this.reconnect() ? this.removePlayerCrossServerLocation(name, homeName) : -1;
+        }
 
         try (Connection connection = this.dataSource.getConnection()) {
             String xuid = GamePlayerFactory.getInstance().getTargetXuid(name);
@@ -200,6 +216,12 @@ public final class CrossServerTeleportFactory extends MysqlProvider {
             return;
         }
 
+        if (this.dataSource.isClosed() || !this.dataSource.isRunning()) {
+            if (this.reconnect()) this.createWarpCrossServerLocation(name, location);
+
+            return;
+        }
+
         this.crossServerLocationMap.put(name.toLowerCase(), new CrossServerLocation(name, Placeholders.stringFromLocation(location), location));
 
         try (Connection connection = this.dataSource.getConnection()) {
@@ -223,6 +245,12 @@ public final class CrossServerTeleportFactory extends MysqlProvider {
 
     public void removeWarpCrossServerLocation(String name) {
         if (this.dataSource == null) {
+            return;
+        }
+
+        if (this.dataSource.isClosed() || !this.dataSource.isRunning()) {
+            if (this.reconnect()) this.removeWarpCrossServerLocation(name);
+
             return;
         }
 

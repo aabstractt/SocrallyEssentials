@@ -1,5 +1,6 @@
 package dev.thatsmybaby.essentials.factory;
 
+import cn.nukkit.Server;
 import dev.thatsmybaby.essentials.AbstractEssentials;
 import dev.thatsmybaby.essentials.factory.provider.MysqlProvider;
 import dev.thatsmybaby.essentials.object.GamePlayer;
@@ -35,6 +36,14 @@ public final class GamePlayerFactory extends MysqlProvider {
 
     public void loadGamePlayer(String xuid, String name) {
         if (this.dataSource == null) {
+            return;
+        }
+
+        if (this.dataSource.isClosed() || !this.dataSource.isRunning()) {
+            if (this.reconnect()) {
+                this.loadGamePlayer(xuid, name);
+            }
+
             return;
         }
 
@@ -80,11 +89,11 @@ public final class GamePlayerFactory extends MysqlProvider {
     }
 
     public String getTargetXuid(String name) {
-        String xuid = null;
-
-        if (this.dataSource == null) {
-            return null;
+        if (this.dataSource == null || this.dataSource.isClosed() || !this.dataSource.isRunning()) {
+            return this.reconnect() ? this.getTargetXuid(name) : null;
         }
+
+        String xuid = null;
 
         try (Connection connection = this.dataSource.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM users WHERE username = ?");
@@ -107,11 +116,11 @@ public final class GamePlayerFactory extends MysqlProvider {
     }
 
     public String getTargetName(String xuid) {
-        String name = null;
-
-        if (this.dataSource == null) {
-            return null;
+        if (this.dataSource == null || this.dataSource.isClosed() || !this.dataSource.isRunning()) {
+            return this.reconnect() ? this.getTargetName(xuid) : null;
         }
+
+        String name = null;
 
         try (Connection connection = this.dataSource.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM users WHERE xuid = ?");
@@ -135,6 +144,16 @@ public final class GamePlayerFactory extends MysqlProvider {
 
     public void updateMaxHomeSize(String xuid, int maxHomeSize) {
         if (this.dataSource == null) {
+            return;
+        }
+
+        if (this.dataSource.isClosed() || !this.dataSource.isRunning()) {
+            AbstractEssentials.getInstance().getLogger().warning("MySQL Provider was disconnected... Reconnecting.");
+
+            this.reconnect();
+
+            this.updateMaxHomeSize(xuid, maxHomeSize);
+
             return;
         }
 
