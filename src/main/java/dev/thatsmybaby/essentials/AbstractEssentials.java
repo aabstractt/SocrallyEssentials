@@ -33,7 +33,7 @@ public final class AbstractEssentials extends PluginBase {
         this.getServer().getCommandMap().register("essentials", new RemoveHomeCommand("remhome", "Remove a player home"));
         this.getServer().getCommandMap().register("essentials", new SeeHomeCommand("seehome", "See all player home"));
         this.getServer().getCommandMap().register("essentials", new HomesCommand("homes", "See you home list"));
-        this.getServer().getCommandMap().register("essentials", new EssentialsReloadCommand("ereload"));
+        //this.getServer().getCommandMap().register("essentials", new EssentialsReloadCommand("ereload"));
 
         this.getServer().getCommandMap().register("essentials", new TpaCommand("tpa", "Request tpa to a player"));
         this.getServer().getCommandMap().register("essentials", new TpaAcceptCommand("tpaccept", "Accept a tpa request"));

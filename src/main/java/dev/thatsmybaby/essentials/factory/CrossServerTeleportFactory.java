@@ -200,6 +200,8 @@ public final class CrossServerTeleportFactory extends MysqlProvider {
             return;
         }
 
+        this.crossServerLocationMap.put(name.toLowerCase(), new CrossServerLocation(name, Placeholders.stringFromLocation(location), location));
+
         try (Connection connection = this.dataSource.getConnection()) {
             PreparedStatement preparedStatement;
 
@@ -223,6 +225,8 @@ public final class CrossServerTeleportFactory extends MysqlProvider {
         if (this.dataSource == null) {
             return;
         }
+
+        this.crossServerLocationMap.remove(name.toLowerCase());
 
         try (Connection connection = this.dataSource.getConnection()) {
             PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM essentials_warps WHERE name = ?");
