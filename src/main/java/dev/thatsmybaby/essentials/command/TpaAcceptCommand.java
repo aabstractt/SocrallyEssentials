@@ -12,7 +12,7 @@ import dev.thatsmybaby.essentials.object.GamePlayer;
 public final class TpaAcceptCommand extends Command {
 
     public TpaAcceptCommand(String name, String description) {
-        super(name, description);
+        super(name, description, "", new String[]{"ypyes"});
     }
 
     @Override

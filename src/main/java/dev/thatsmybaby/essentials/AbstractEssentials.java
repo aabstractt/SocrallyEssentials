@@ -38,6 +38,11 @@ public final class AbstractEssentials extends PluginBase {
         this.getServer().getCommandMap().register("essentials", new TpaCommand("tpa", "Request tpa to a player"));
         this.getServer().getCommandMap().register("essentials", new TpaAcceptCommand("tpaccept", "Accept a tpa request"));
 
+        this.getServer().getCommandMap().register("essentials", new WarpCommand("warp", "Go to a warp"));
+        this.getServer().getCommandMap().register("essentials", new SetWarpCommand("setwarp", "Set a new warp"));
+        this.getServer().getCommandMap().register("essentials", new DelWarpCommand("delwarp", "Delete a warp"));
+        this.getServer().getCommandMap().register("essentials", new SpawnCommand("spawn"));
+
         this.getServer().getPluginManager().registerEvents(new PlayerJoinListener(), this);
         this.getServer().getPluginManager().registerEvents(new PlayerQuitListener(), this);
     }

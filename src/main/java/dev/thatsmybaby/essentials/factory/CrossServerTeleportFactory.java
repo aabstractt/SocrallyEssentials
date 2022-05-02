@@ -18,6 +18,8 @@ public final class CrossServerTeleportFactory extends MysqlProvider {
 
     @Getter private final static CrossServerTeleportFactory instance = new CrossServerTeleportFactory();
 
+    private final Map<String, CrossServerLocation> crossServerLocationMap = new HashMap<>();
+
     @Override
     public void init(File file) {
         super.init(file);
@@ -31,9 +33,16 @@ public final class CrossServerTeleportFactory extends MysqlProvider {
 
             preparedStatement.executeUpdate();
             preparedStatement.close();
+
+            preparedStatement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS essentials_warps (rowId INT PRIMARY KEY AUTO_INCREMENT, name VARCHAR(30), location TEXT)");
+
+            preparedStatement.executeUpdate();
+            preparedStatement.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
+        this.loadWarpCrossServerLocations();
     }
 
     public CrossServerLocation createPlayerCrossServerLocation(String xuid, String homeName, Location location) {
@@ -156,5 +165,72 @@ public final class CrossServerTeleportFactory extends MysqlProvider {
         }
 
         return -1;
+    }
+
+    public void loadWarpCrossServerLocations() {
+        if (this.dataSource == null) {
+            return;
+        }
+
+        try (Connection connection = this.dataSource.getConnection()) {
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM essentials_warps");
+
+            ResultSet rs = preparedStatement.executeQuery();
+
+            while (rs.next()) {
+                CrossServerLocation crossServerLocation = new CrossServerLocation(
+                        rs.getString("name"),
+                        rs.getString("location"),
+                        Placeholders.locationFromString(rs.getString("location"))
+                );
+
+                this.crossServerLocationMap.put(crossServerLocation.getName().toLowerCase(), crossServerLocation);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public CrossServerLocation getWarpCrossServerLocation(String name) {
+        return this.crossServerLocationMap.get(name.toLowerCase());
+    }
+
+    public void createWarpCrossServerLocation(String name, Location location) {
+        if (this.dataSource == null) {
+            return;
+        }
+
+        try (Connection connection = this.dataSource.getConnection()) {
+            PreparedStatement preparedStatement;
+
+            if (this.getWarpCrossServerLocation(name) == null) {
+                preparedStatement = connection.prepareStatement("INSERT INTO essentials_warps (location, name) VALUES (?, ?)");
+            } else {
+                preparedStatement = connection.prepareStatement("UPDATE essentials_warps SET location = ? WHERE name = ?");
+            }
+
+            preparedStatement.setString(1, Placeholders.stringFromLocation(location));
+            preparedStatement.setString(1, name);
+
+            preparedStatement.executeUpdate();
+            preparedStatement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void removeWarpCrossServerLocation(String name) {
+        if (this.dataSource == null) {
+            return;
+        }
+
+        try (Connection connection = this.dataSource.getConnection()) {
+            PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM essentials_warps WHERE name = ?");
+
+            preparedStatement.setString(1, name);
+            preparedStatement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }
