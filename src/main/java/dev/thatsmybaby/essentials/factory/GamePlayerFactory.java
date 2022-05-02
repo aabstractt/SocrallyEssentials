@@ -1,6 +1,6 @@
 package dev.thatsmybaby.essentials.factory;
 
-import dev.thatsmybaby.essentials.EssentialsLoader;
+import dev.thatsmybaby.essentials.AbstractEssentials;
 import dev.thatsmybaby.essentials.factory.provider.MysqlProvider;
 import dev.thatsmybaby.essentials.object.GamePlayer;
 import lombok.Getter;
@@ -44,7 +44,7 @@ public final class GamePlayerFactory extends MysqlProvider {
             if (this.getTargetName(xuid) == null) {
                 preparedStatement = connection.prepareStatement("INSERT INTO users (username, xuid, max_home_size) VALUES (?, ?, ?)");
 
-                preparedStatement.setInt(3, EssentialsLoader.getInstance().getConfig().getInt("default-home-size"));
+                preparedStatement.setInt(3, AbstractEssentials.getInstance().getConfig().getInt("default-home-size"));
             } else {
                 preparedStatement = connection.prepareStatement("UPDATE users SET username = ? WHERE xuid = ? ");
             }
@@ -65,7 +65,10 @@ public final class GamePlayerFactory extends MysqlProvider {
                         xuid,
                         name,
                         CrossServerTeleportFactory.getInstance().loadPlayerCrossServerLocations(xuid, true),
-                        rs.getInt("max_home_size"), false
+                        rs.getInt("max_home_size"),
+                        true,
+                        false,
+                        null
                 ));
             }
 

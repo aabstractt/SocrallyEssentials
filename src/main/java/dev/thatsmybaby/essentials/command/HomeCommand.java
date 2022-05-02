@@ -7,7 +7,7 @@ import cn.nukkit.command.CommandSender;
 import cn.nukkit.level.Location;
 import cn.nukkit.scheduler.TaskHandler;
 import cn.nukkit.utils.TextFormat;
-import dev.thatsmybaby.essentials.EssentialsLoader;
+import dev.thatsmybaby.essentials.AbstractEssentials;
 import dev.thatsmybaby.essentials.Placeholders;
 import dev.thatsmybaby.essentials.object.CrossServerLocation;
 import dev.thatsmybaby.essentials.object.GamePlayer;
@@ -75,12 +75,12 @@ public final class HomeCommand extends Command {
 
         Location initialLocation = player.getLocation();
 
-        final int[] time = {EssentialsLoader.getInstance().getConfig().getInt("general.teleport_time") + 1};
+        final int[] time = {AbstractEssentials.getInstance().getConfig().getInt("general.teleport_time") + 1};
 
-        taskHandlerMap.put(player.getLoginChainData().getXUID(), Server.getInstance().getScheduler().scheduleDelayedRepeatingTask(EssentialsLoader.getInstance(), () -> {
-            TaskHandler taskHandler = taskHandlerMap.get(player.getLoginChainData().getXUID());
-
+        taskHandlerMap.put(player.getLoginChainData().getXUID(), Server.getInstance().getScheduler().scheduleDelayedRepeatingTask(AbstractEssentials.getInstance(), () -> {
             if (!gamePlayer.isAlreadyTeleporting()) {
+                TaskHandler taskHandler = taskHandlerMap.remove(player.getLoginChainData().getXUID());
+
                 if (taskHandler != null) taskHandler.cancel();
 
                 return;

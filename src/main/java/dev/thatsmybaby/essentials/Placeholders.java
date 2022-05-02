@@ -17,7 +17,7 @@ public final class Placeholders {
 
     public static String replacePlaceholders(String text, String... args) {
         if (messages.isEmpty()) {
-            messages = (new Config(new File(EssentialsLoader.getInstance().getDataFolder(), "messages.yml"))).getAll();
+            messages = (new Config(new File(AbstractEssentials.getInstance().getDataFolder(), "messages.yml"))).getAll();
         }
 
         if (messages.containsKey(text)) {

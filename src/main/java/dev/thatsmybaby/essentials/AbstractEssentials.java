@@ -1,5 +1,7 @@
 package dev.thatsmybaby.essentials;
 
+import cn.nukkit.Player;
+import cn.nukkit.Server;
 import cn.nukkit.plugin.PluginBase;
 import dev.thatsmybaby.essentials.command.*;
 import dev.thatsmybaby.essentials.factory.CrossServerTeleportFactory;
@@ -10,9 +12,9 @@ import lombok.Getter;
 
 import java.io.File;
 
-public final class EssentialsLoader extends PluginBase {
+public final class AbstractEssentials extends PluginBase {
 
-    @Getter private static EssentialsLoader instance;
+    @Getter private static AbstractEssentials instance;
 
     public void onEnable() {
         instance = this;
@@ -33,6 +35,9 @@ public final class EssentialsLoader extends PluginBase {
         this.getServer().getCommandMap().register("essentials", new HomesCommand("homes", "See you home list"));
         this.getServer().getCommandMap().register("essentials", new EssentialsReloadCommand("ereload"));
 
+        this.getServer().getCommandMap().register("essentials", new TpaCommand("tpa", "Request tpa to a player"));
+        this.getServer().getCommandMap().register("essentials", new TpaAcceptCommand("tpaccept", "Accept a tpa request"));
+
         this.getServer().getPluginManager().registerEvents(new PlayerJoinListener(), this);
         this.getServer().getPluginManager().registerEvents(new PlayerQuitListener(), this);
     }
@@ -42,5 +47,15 @@ public final class EssentialsLoader extends PluginBase {
         GamePlayerFactory.getInstance().close();
 
         CrossServerTeleportFactory.getInstance().close();
+    }
+
+    public static boolean released() {
+        return false;
+    }
+
+    public static String getTargetName(String name) {
+        Player player = Server.getInstance().getPlayer(name);
+
+        return player != null ? player.getName() : null;
     }
 }
