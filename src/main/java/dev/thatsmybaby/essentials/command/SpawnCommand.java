@@ -13,6 +13,8 @@ public final class SpawnCommand extends Command {
 
     public SpawnCommand(String name) {
         super(name);
+
+        this.setPermission("essentials.command.spawn");
     }
 
     @Override
@@ -22,6 +24,8 @@ public final class SpawnCommand extends Command {
 
             return false;
         }
+
+        if (!this.testPermission(commandSender)) return false;
 
         GamePlayer gamePlayer = GamePlayer.of((Player) commandSender);
 
