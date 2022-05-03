@@ -5,7 +5,8 @@ YOU_CANT_USE_THIS_ON_YOURSELF: "§4You can't use this on yourself"
 
 PLAYER_ALREADY_TELEPORTING: "&cAlready teleporting..."
 HOME_ALREADY_TELEPORTING: "&cAlready teleporting to the home!"
-PLAYER_HOME_LIMIT_UPDATED: "&a{%0}'s home limit updated to &e{%1}"
+PLAYER_HOME_LIMIT_REMOVED: "&aRemoved {%1} home limit to {%0}!"
+PLAYER_HOME_LIMIT_ADDED: "&aAdded {%1} home limit to {%0}"
 
 # {%0} = Home name
 SET_HOME_SUCCESSFULLY_CREATED: "&aHome {%0} successfully created!"

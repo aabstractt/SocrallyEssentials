@@ -28,18 +28,19 @@ public final class AddHomeCommand extends Command {
 
         if (!this.testPermission(commandSender)) return false;
 
-        if (!Placeholders.isNumber(args[1])) {
+        boolean negative = args[1].charAt(0) == '-';
+        int amount = Placeholders.parseInt(negative ? args[1].substring(1) : args[1]);
+
+        if (amount == 0) {
             commandSender.sendMessage(Placeholders.replacePlaceholders("INVALID_NUMBER", args[1]));
 
             return false;
         }
 
-        int amount = Integer.parseInt(args[1]);
-
         Player target = Server.getInstance().getPlayer(args[0]);
 
         if (target == null) {
-            TaskUtils.runAsync(() -> handleAsync(commandSender, args[0], amount));
+            TaskUtils.runAsync(() -> handleAsync(commandSender, args[0], negative, amount));
 
             return false;
         }
@@ -52,16 +53,16 @@ public final class AddHomeCommand extends Command {
             return false;
         }
 
-        gamePlayer.setMaxHomeSize(amount);
+        gamePlayer.setMaxHomeSize(negative ? gamePlayer.getMaxHomeSize() - amount : gamePlayer.getMaxHomeSize() + amount);
 
-        commandSender.sendMessage(Placeholders.replacePlaceholders("PLAYER_HOME_LIMIT_UPDATED", gamePlayer.getName(), args[1]));
+        commandSender.sendMessage(Placeholders.replacePlaceholders("PLAYER_HOME_LIMIT_" + (negative ? "REMOVED" : "ADDED"), gamePlayer.getName(), String.valueOf(amount)));
 
-        TaskUtils.runAsync(() -> GamePlayerFactory.getInstance().updateMaxHomeSize(gamePlayer.getXuid(), amount));
+        TaskUtils.runAsync(() -> GamePlayerFactory.getInstance().updateMaxHomeSize(gamePlayer.getXuid(), gamePlayer.getMaxHomeSize()));
 
         return false;
     }
 
-    private void handleAsync(CommandSender commandSender, String name, int amount) {
+    private void handleAsync(CommandSender commandSender, String name, boolean negative, int amount) {
         String xuid = GamePlayerFactory.getInstance().getTargetXuid(name);
 
         if (xuid == null) {
@@ -70,8 +71,10 @@ public final class AddHomeCommand extends Command {
             return;
         }
 
-        commandSender.sendMessage(Placeholders.replacePlaceholders("PLAYER_HOME_LIMIT_UPDATED", name, String.valueOf(amount)));
+        commandSender.sendMessage(Placeholders.replacePlaceholders("PLAYER_HOME_LIMIT_" + (negative ? "REMOVED" : "ADDED"), name, String.valueOf(amount)));
 
-        GamePlayerFactory.getInstance().updateMaxHomeSize(xuid, amount);
+        int currentAmount = GamePlayerFactory.getInstance().getTargetMaxHomeSize(xuid);
+
+        GamePlayerFactory.getInstance().updateMaxHomeSize(xuid, negative ? currentAmount - amount : currentAmount + amount);
     }
 }

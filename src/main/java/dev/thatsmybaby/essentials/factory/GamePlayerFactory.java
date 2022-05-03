@@ -34,11 +34,7 @@ public final class GamePlayerFactory extends MysqlProvider {
     }
 
     public void loadGamePlayer(String xuid, String name) {
-        if (this.dataSource == null) {
-            return;
-        }
-
-        if (this.dataSource.isClosed() || !this.dataSource.isRunning()) {
+        if (this.dataSource == null || this.dataSource.isClosed() || !this.dataSource.isRunning()) {
             if (this.reconnect()) {
                 this.loadGamePlayer(xuid, name);
             }
@@ -52,7 +48,7 @@ public final class GamePlayerFactory extends MysqlProvider {
             if (this.getTargetName(xuid) == null) {
                 preparedStatement = connection.prepareStatement("INSERT INTO users (username, xuid, max_home_size) VALUES (?, ?, ?)");
 
-                preparedStatement.setInt(3, AbstractEssentials.getInstance().getConfig().getInt("default-home-size"));
+                preparedStatement.setInt(3, AbstractEssentials.getInstance().getConfig().getInt("general.default-home-size"));
             } else {
                 preparedStatement = connection.prepareStatement("UPDATE users SET username = ? WHERE xuid = ? ");
             }
@@ -141,6 +137,35 @@ public final class GamePlayerFactory extends MysqlProvider {
         return name;
     }
 
+    public int getTargetMaxHomeSize(String xuid) {
+        if (this.dataSource == null || this.dataSource.isClosed() || !this.dataSource.isRunning()) {
+            AbstractEssentials.getInstance().getLogger().warning("MySQL Provider was disconnected... Reconnecting.");
+
+            return this.reconnect() ? this.getTargetMaxHomeSize(xuid) : 0;
+        }
+
+        int amount = 0;
+
+        try (Connection connection = this.dataSource.getConnection()) {
+            PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM users WHERE xuid = ?");
+
+            preparedStatement.setString(1, xuid);
+
+            ResultSet rs = preparedStatement.executeQuery();
+
+            if (rs.next()) {
+                amount = rs.getInt("max_home_size");
+            }
+
+            rs.close();
+            preparedStatement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return amount;
+    }
+
     public void updateMaxHomeSize(String xuid, int maxHomeSize) {
         if (this.dataSource == null) {
             return;
@@ -149,9 +174,7 @@ public final class GamePlayerFactory extends MysqlProvider {
         if (this.dataSource.isClosed() || !this.dataSource.isRunning()) {
             AbstractEssentials.getInstance().getLogger().warning("MySQL Provider was disconnected... Reconnecting.");
 
-            this.reconnect();
-
-            this.updateMaxHomeSize(xuid, maxHomeSize);
+            if (this.reconnect()) this.updateMaxHomeSize(xuid, maxHomeSize);
 
             return;
         }

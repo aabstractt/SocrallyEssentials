@@ -60,13 +60,11 @@ public final class Placeholders {
         return Location.fromObject(position, position.getValidLevel(), Double.parseDouble(split[4]), Double.parseDouble(split[5]));
     }
 
-    public static boolean isNumber(String parsed) {
+    public static int parseInt(String parsed) {
         try {
-            Integer.parseInt(parsed);
-
-            return true;
+            return Integer.parseInt(parsed);
         } catch (Exception ignored) {
-            return false;
+            return 0;
         }
     }
 }
