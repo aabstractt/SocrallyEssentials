@@ -85,10 +85,13 @@ public final class TpaAcceptCommand extends Command {
             return false;
         }
 
-        targetGamePlayer.cancelRunnable(gamePlayer.getXuid());
+        if (!targetGamePlayer.getPendingTpaRequestsSent().remove(gamePlayer.getName()) || !gamePlayer.getPendingTpaRequests().remove(target.getName())) {
+            commandSender.sendMessage(Placeholders.replacePlaceholders("NO_PENDING_TPA_REQUEST", targetName));
 
-        targetGamePlayer.getPendingTpaRequestsSent().remove(gamePlayer.getName());
-        gamePlayer.getPendingTpaRequests().remove(target.getName());
+            return false;
+        }
+
+        targetGamePlayer.cancelRunnable(gamePlayer.getXuid());
 
         commandSender.sendMessage(Placeholders.replacePlaceholders("TPA_REQUEST_SUCCESSFULLY_ACCEPTED", targetName));
         target.sendMessage(Placeholders.replacePlaceholders("TARGET_TPA_REQUEST_SUCCESSFULLY_ACCEPTED", commandSender.getName()));

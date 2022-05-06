@@ -55,7 +55,7 @@ public final class AbstractEssentials extends PluginBase {
     }
 
     public static boolean released() {
-        return false;
+        return true;
     }
 
     public static String getTargetName(String name) {
